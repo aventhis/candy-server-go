@@ -4,6 +4,7 @@ package restapi
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -37,11 +38,42 @@ func configureAPI(api *operations.CandyServerAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	if api.BuyCandyHandler == nil {
-		api.BuyCandyHandler = operations.BuyCandyHandlerFunc(func(params operations.BuyCandyParams) middleware.Responder {
-			return middleware.NotImplemented("operation operations.BuyCandy has not yet been implemented")
+	api.BuyCandyHandler = operations.BuyCandyHandlerFunc(func(params operations.BuyCandyParams) middleware.Responder {
+		candyPrice := map[string]int64{
+			"CE": 10,
+			"AA": 15,
+			"NT": 17,
+			"DE": 21,
+			"YR": 23,
+		}
+
+		//проверка на входные данные
+		price, exist := candyPrice[*params.Order.CandyType]
+		if !exist {
+			return operations.NewBuyCandyBadRequest().WithPayload(&operations.BuyCandyBadRequestBody{
+				Error: "Invalid candy type",
+			})
+		}
+
+		if *params.Order.CandyCount <= 0 {
+			return operations.NewBuyCandyBadRequest().WithPayload(&operations.BuyCandyBadRequestBody{
+				Error: "Candy count must be greater than zero",
+			})
+		}
+
+		totalCost := price * (*params.Order.CandyCount)
+
+		if totalCost > *params.Order.Money {
+			return operations.NewBuyCandyPaymentRequired().WithPayload(&operations.BuyCandyPaymentRequiredBody{
+				Error: fmt.Sprintf("You need %v more money", totalCost-*params.Order.Money),
+			})
+		}
+		change := *params.Order.Money - totalCost
+		return operations.NewBuyCandyCreated().WithPayload(&operations.BuyCandyCreatedBody{
+			Thanks: "Thank you",
+			Change: change,
 		})
-	}
+	})
 
 	api.PreServerShutdown = func() {}
 
