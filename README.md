@@ -91,7 +91,7 @@ openssl x509 -req -in client.csr -CA minica.pem -CAkey minica-key.pem -CAcreates
 ### Step 5. Run the Server
 Run the server with the certificate paths:
 ```bash
-go run cmd/candy-server-server/main.go --tls-certificate=candy.tld/cert.pem --tls-key=candy.tld/key.pem --tls-ca=minica.pem
+go run cmd/candy-server-server/main.go --tls-port=3333 --tls-certificate=candy.tld/cert.pem --tls-key=candy.tld/key.pem --tls-ca=minica.pem
 ```
 
 ## Client Application

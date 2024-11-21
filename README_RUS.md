@@ -101,7 +101,7 @@ openssl x509 -req -in client.csr -CA minica.pem -CAkey minica-key.pem -CAcreates
 ### Шаг 4. Запуск сервера
 Запустите сервер с указанием путей к сертификатам:
 ```bash
-go run cmd/candy-server-server/main.go --tls-certificate=candy.tld/cert.pem --tls-key=candy.tld/key.pem --tls-ca=minica.pem
+go run cmd/candy-server-server/main.go --tls-port=3333 --tls-certificate=candy.tld/cert.pem --tls-key=candy.tld/key.pem --tls-ca=minica.pem
 ```
 
 ## Клиентское приложение

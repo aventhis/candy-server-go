@@ -5,11 +5,10 @@ package restapi
 import (
 	"crypto/tls"
 	"fmt"
-	"net/http"
-
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"net/http"
 
 	"github.com/aventhis/candy-server-go/restapi/operations"
 )
@@ -21,6 +20,7 @@ func configureFlags(api *operations.CandyServerAPI) {
 }
 
 func configureAPI(api *operations.CandyServerAPI) http.Handler {
+
 	// configure the api here
 	api.ServeError = errors.ServeError
 
