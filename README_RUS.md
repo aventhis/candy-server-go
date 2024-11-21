@@ -108,6 +108,7 @@ go run cmd/candy-server-server/main.go --tls-port=3333 --tls-certificate=candy.t
 
 Для тестирования используйте `candy-client`:
 ```bash
+go build candy-client.go
 ./candy-client -k <тип_конфеты> -c <количество> -m <сумма_денег>
 ```
 
