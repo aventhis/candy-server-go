@@ -60,43 +60,47 @@ go mod tidy
    swagger generate server -f swagger.yaml -a candy-server
    ```
 
-### Step 4. Generate Certificates
-If you don’t have certificates yet, follow these steps:
+### Step 4. Using Makefile
+For simplifying development and testing, the project includes a `Makefile`. Main commands:
 
-#### Generate Server Certificates
-1. Run Minica with your domain:
-   ```bash
-   ./minica --domains candy.tld
-   ```
-2. After the command, Minica will create the following files:
-   - `minica.pem` — root certificate.
-   - `minica-key.pem` — private CA key.
-   - Inside the `candy.tld` folder:
-      - `cert.pem` — server certificate.
-      - `key.pem` — server private key.
+- **Build the server and client:**
+  ```bash
+  make all
+  ```
+- **Run the server:**
+  ```bash
+  make start-server
+  ```
+- **Run the client:**
+  ```bash
+  make start-client
+  ```
+- **Generate certificates for the server and client:**
+  ```bash
+  make generate-certs
+  ```
+- **Clean binaries and certificates:**
+  ```bash
+  make clean clean-certs
+  ```
 
-3. Move the `cert.pem` and `key.pem` files to the project folder (e.g., src/candy.tld).
-
-#### Generate Client Certificates
-Inside `src/client.tld`, generate client certificates:
-   ```bash
-openssl genrsa -out client-key.pem 2048
-openssl req -new -key client-key.pem -out client.csr
-openssl x509 -req -in client.csr -CA minica.pem -CAkey minica-key.pem -CAcreateserial -out client-cert.pem -days 365
+Example full flow:
+```bash
+make clean clean-certs
+make generate-certs
+make start-server
+make start-client
 ```
-- `client-cert.pem` — client certificate.
-- `client-key.pem` — client private key.
-- `client.csr` — certificate request.
 
-### Step 5. Run the Server
-Run the server with the certificate paths:
+### Step 5. Run the Server (Manual Option)
+You can also run the server manually with the certificate paths:
 ```bash
 go run cmd/candy-server-server/main.go --tls-port=3333 --tls-certificate=candy.tld/cert.pem --tls-key=candy.tld/key.pem --tls-ca=minica.pem
 ```
 
-## Client Application
+### Step 6. Run the Client (Manual Option)
 
-Use `candy-client` for testing:
+Build and run the client manually:
 ```bash
 go build candy-client.go
 ./candy-client -k <candy_type> -c <count> -m <money_amount>
